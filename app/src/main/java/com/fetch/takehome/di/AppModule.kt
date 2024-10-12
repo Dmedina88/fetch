@@ -1,7 +1,10 @@
 package com.fetch.takehome.di
 
 import com.fetch.takehome.data.networking.FetchApi
+import com.fetch.takehome.data.repository.FetchRepository
+import com.fetch.takehome.data.repository.FetchRepositoryImpl
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,5 +51,11 @@ object AppModule {
     @Singleton
     fun provideFetchApi(retrofit: Retrofit): FetchApi = retrofit.create(FetchApi::class.java)
 
+
+    @Provides
+    @Singleton
+    fun provideFetchRepository(fetchApi: FetchApi): FetchRepository {
+        return FetchRepositoryImpl(fetchApi)
+    }
 
 }

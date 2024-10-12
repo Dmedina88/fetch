@@ -1,6 +1,7 @@
 package com.fetch.takehome.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,15 +28,17 @@ fun FetchListScreen(
 
     viewModel.fetchData()
 
-    if (uiState.isLoading) {
-        CircularProgressIndicator()
-    }
-
     LazyColumn {
+
         items(uiState.listItems) { item ->
             when (item) {
                 is ListItems.ListItem -> ListItem(item = item)
                 is ListItems.ListHeader -> ListHeader(header = item)
+            }
+        }
+        if (uiState.isLoading) {
+            item {
+                CircularProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
         }
         uiState.error?.let {

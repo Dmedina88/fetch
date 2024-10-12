@@ -3,7 +3,7 @@ package com.fetch.takehome.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fetch.takehome.data.networking.FetchData
-import com.fetch.takehome.data.repository.FetchRepo
+import com.fetch.takehome.data.repository.FetchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FetchListViewModel @Inject constructor(
-    private val fetchRepo: FetchRepo
+    private val fetchRepo: FetchRepository
 ) : ViewModel() {
 
 
@@ -24,7 +24,6 @@ class FetchListViewModel @Inject constructor(
     fun fetchData() {
         viewModelScope.launch {
             try {
-
                 _uiState.update { it.copy(isLoading = true, error = null) }
                 val listItems = mutableListOf<ListItems>()
                 var lastListId: Int? = null
