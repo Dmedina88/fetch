@@ -1,4 +1,4 @@
-# Fetch Take Home Project
+# Fetch
 
 This project is a solution for the Fetch coding exercise. It fetches data from a provided endpoint, processes it, and displays it in a user-friendly format.
 
