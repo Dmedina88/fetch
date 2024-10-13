@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.fetch.takehome.data.networking.FetchData
 import com.fetch.takehome.data.repository.FetchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FetchListViewModel @Inject constructor(
-    private val fetchRepo: FetchRepository
+    private val fetchRepo: FetchRepository,
+    private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
 
@@ -22,7 +24,7 @@ class FetchListViewModel @Inject constructor(
     val uiState: StateFlow<State> = _uiState.asStateFlow()
 
     fun fetchData() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher) {
             try {
                 _uiState.update { it.copy(isLoading = true, error = null) }
                 val listItems = mutableListOf<ListItems>()
@@ -42,8 +44,9 @@ class FetchListViewModel @Inject constructor(
                                 listId = item.listId
                             )
                         )
-                        _uiState.update { it.copy(listItems = listItems, isLoading = false) }
                     }
+                _uiState.update { it.copy(listItems = listItems, isLoading = false) }
+
             } catch (e: Throwable) {
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
             }

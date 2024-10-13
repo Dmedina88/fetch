@@ -9,6 +9,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -57,5 +59,10 @@ object AppModule {
     fun provideFetchRepository(fetchApi: FetchApi): FetchRepository {
         return FetchRepositoryImpl(fetchApi)
     }
+
+    @Provides
+    @Singleton
+    fun provideDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
 
 }

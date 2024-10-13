@@ -1,6 +1,8 @@
 package com.fetch.takehome.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,11 +16,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fetch.takehome.R
+
 
 @Composable
 fun FetchListScreen(
@@ -28,32 +33,55 @@ fun FetchListScreen(
 
     viewModel.fetchData()
 
-    LazyColumn {
+    FetchListContent(
+        listItems = uiState.listItems,
+        isLoading = uiState.isLoading,
+        error = uiState.error,
+        onRetryClick = { viewModel.fetchData() }
+    )
+}
 
-        items(uiState.listItems) { item ->
+@Composable
+fun FetchListContent(
+    listItems: List<ListItems>,
+    isLoading: Boolean,
+    error: String? = null,
+    onRetryClick: () -> Unit = {}
+) {
+    LazyColumn {
+        items(listItems) { item ->
             when (item) {
                 is ListItems.ListItem -> ListItem(item = item)
                 is ListItems.ListHeader -> ListHeader(header = item)
             }
         }
-        if (uiState.isLoading) {
+        if (isLoading) {
             item {
-                CircularProgressIndicator(modifier = Modifier.fillMaxWidth())
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
         }
-        uiState.error?.let {
+        error?.let {
             item {
-                Text(text = it)
-                Button(onClick = { viewModel.fetchData() }) {
-                    Text(text = stringResource(R.string.retry))
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = it)
+                    Button(onClick = onRetryClick) {
+                        Text(text = stringResource(R.string.retry))
+                    }
                 }
             }
         }
     }
-
-
 }
-
 
 @Composable
 fun ListHeader(header: ListItems.ListHeader) {
@@ -64,7 +92,7 @@ fun ListHeader(header: ListItems.ListHeader) {
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primary)
-            .padding(top = 16.dp)
+            .padding(16.dp)
     )
     HorizontalDivider(
         color = MaterialTheme.colorScheme.onSecondary,
@@ -85,5 +113,39 @@ fun ListItem(item: ListItems.ListItem) {
     HorizontalDivider(
         color = MaterialTheme.colorScheme.onSecondary,
     )
+}
 
+
+@Preview(showBackground = true)
+@Composable
+fun FetchListContentPreview() {
+    FetchListContent(
+        listItems = listOf(
+            ListItems.ListHeader(header = "1"),
+            ListItems.ListItem(id = 1, listId = 1, name = "Item 1")
+        ),
+        isLoading = false
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FetchListContentPreviewLoading() {
+    FetchListContent(
+        listItems = listOf(
+            ListItems.ListHeader(header = "1"),
+            ListItems.ListItem(id = 1, listId = 1, name = "Item 1")
+        ),
+        isLoading = true
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FetchListContentPreviewError() {
+    FetchListContent(
+        listItems = emptyList(),
+        isLoading = false,
+        error = "Error"
+    )
 }

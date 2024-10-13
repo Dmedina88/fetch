@@ -40,6 +40,13 @@ android {
     buildFeatures {
         compose = true
     }
+
+    sourceSets {
+        getByName("test") {
+            java.srcDirs("src/main/java")
+        }
+    }
+
 }
 
 dependencies {
@@ -64,6 +71,12 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     testImplementation(libs.junit)
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+    testImplementation("io.mockk:mockk:1.13.13")
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.8.22")
+    testImplementation(project(":app"))
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
